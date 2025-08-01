@@ -1,103 +1,190 @@
-import Image from "next/image";
+"use client"
+
+import { useEffect, useState } from "react"
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [userName, setUserName] = useState("")
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    useEffect(() => {
+        // Verificar se há token e extrair nome do usuário
+        const token = localStorage.getItem("authToken")
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]))
+                setUserName(payload.nome || "Usuário")
+                setIsLoggedIn(true)
+            } catch (error) {
+                console.error("Erro ao decodificar token:", error)
+                localStorage.removeItem("authToken")
+            }
+        }
+    }, [])
+
+    const handleLogout = () => {
+        localStorage.removeItem("authToken")
+        setIsLoggedIn(false)
+        setUserName("")
+    }
+
+    return (
+        <div style={{
+            minHeight: "100vh",
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px"
+        }}>
+            <div style={{
+                backgroundColor: "white",
+                padding: "50px",
+                borderRadius: "15px",
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                width: "100%",
+                maxWidth: "500px",
+                textAlign: "center"
+            }}>
+                <div style={{
+                    width: "80px",
+                    height: "80px",
+                    backgroundColor: "#007bff",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 30px",
+                    fontSize: "32px",
+                    color: "white",
+                    fontWeight: "bold"
+                }}>
+                    🚀
+                </div>
+
+                <h1 style={{
+                    color: "#333",
+                    fontSize: "32px",
+                    marginBottom: "15px",
+                    fontWeight: "700"
+                }}>
+                    Solidarify
+                </h1>
+
+                <p style={{
+                    color: "#666",
+                    fontSize: "18px",
+                    marginBottom: "40px",
+                    lineHeight: "1.6"
+                }}>
+                    {isLoggedIn
+                        ? `Bem-vindo de volta, ${userName}!`
+                        : "Sua plataforma de conexões solidárias"
+                    }
+                </p>
+
+                {isLoggedIn ? (
+                    // Menu para usuários logados
+                    <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                        <a
+                            href="/public/perfil"
+                            style={{
+                                display: "block",
+                                padding: "15px 25px",
+                                backgroundColor: "#007bff",
+                                color: "white",
+                                textDecoration: "none",
+                                borderRadius: "8px",
+                                fontSize: "16px",
+                                fontWeight: "500",
+                                transition: "all 0.3s ease"
+                            }}
+                            onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#0056b3"}
+                            onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = "#007bff"}
+                        >
+                            👤 Meu Perfil
+                        </a>
+
+                        <button
+                            onClick={handleLogout}
+                            style={{
+                                padding: "15px 25px",
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "8px",
+                                fontSize: "16px",
+                                fontWeight: "500",
+                                cursor: "pointer",
+                                transition: "all 0.3s ease"
+                            }}
+                            onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#c82333"}
+                            onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = "#dc3545"}
+                        >
+                            🚪 Sair
+                        </button>
+                    </div>
+                ) : (
+                    // Menu para visitantes
+                    <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                        <a
+                            href="/public/login"
+                            style={{
+                                display: "block",
+                                padding: "15px 25px",
+                                backgroundColor: "#007bff",
+                                color: "white",
+                                textDecoration: "none",
+                                borderRadius: "8px",
+                                fontSize: "16px",
+                                fontWeight: "500",
+                                transition: "all 0.3s ease"
+                            }}
+                            onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#0056b3"}
+                            onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = "#007bff"}
+                        >
+                            🔑 Fazer Login
+                        </a>
+
+                        <a
+                            href="/public/register"
+                            style={{
+                                display: "block",
+                                padding: "15px 25px",
+                                backgroundColor: "#28a745",
+                                color: "white",
+                                textDecoration: "none",
+                                borderRadius: "8px",
+                                fontSize: "16px",
+                                fontWeight: "500",
+                                transition: "all 0.3s ease"
+                            }}
+                            onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = "#218838"}
+                            onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = "#28a745"}
+                        >
+                            📝 Criar Conta
+                        </a>
+
+                        <div style={{
+                            margin: "20px 0",
+                            color: "#999",
+                            fontSize: "14px"
+                        }}>
+                            Já tem uma conta? Faça login acima!
+                        </div>
+                    </div>
+                )}
+
+                {/* Footer */}
+                <div style={{
+                    marginTop: "40px",
+                    paddingTop: "20px",
+                    borderTop: "1px solid #eee",
+                    color: "#999",
+                    fontSize: "14px"
+                }}>
+                    <p>Construindo pontes através da tecnologia 💙</p>
+                </div>
+            </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    )
 }
