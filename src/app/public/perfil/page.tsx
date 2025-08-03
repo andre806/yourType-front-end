@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import FotoPerfil from "@/app/components/FotoPerfil"
+import PostsUser from "@/app/components/PostsUser"
 // Dados de estados e cidades brasileiras
 const estadosCidades = {
     "AC": ["Rio Branco", "Cruzeiro do Sul", "Sena Madureira", "Tarauacá", "Feijó"],
@@ -127,7 +128,7 @@ export default function Perfil() {
 
                 if (currentUser) {
                     // Buscar foto de perfil do S3 (se não estiver no banco)
-                    
+
 
                     setPerfil({
                         id: currentUser.id,
@@ -730,6 +731,7 @@ export default function Perfil() {
                                 >
                                     ❌ Cancelar
                                 </button>
+
                             </>
                         )}
                     </div>
@@ -761,6 +763,11 @@ export default function Perfil() {
                 >
                     Criar Nova Conta
                 </a>
+            </div>
+
+            {/* Imagens do usuário */}
+            <div style={{ maxWidth: "600px", margin: "40px auto 0" }}>
+                <PostsUser />
             </div>
         </div>
     )
